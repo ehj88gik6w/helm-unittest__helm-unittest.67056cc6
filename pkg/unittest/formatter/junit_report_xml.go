@@ -77,7 +77,7 @@ func (j *jUnitReportXML) WriteTestOutput(testSuiteResults []*results.TestSuiteRe
 
 	// convert TestSuiteResults to JUnit test suites
 	for idx, testSuiteResult := range testSuiteResults {
-		ts := j.createJUnitTestSuite(idx+1, testSuiteResult)
+		ts := j.createJUnitTestSuite(idx, testSuiteResult)
 
 		// properties
 		ts.Properties = append(ts.Properties, JUnitProperty{"helm-unittest.version", "1.6"})
@@ -91,7 +91,7 @@ func (j *jUnitReportXML) WriteTestOutput(testSuiteResults []*results.TestSuiteRe
 			}
 
 			// Write when a test is failed
-			if !test.Skipped && test.ExecError == nil {
+			if !test.Skipped && !test.Passed && test.ExecError == nil {
 				ts.Failures++
 				testCase.Failure = j.createJUnitFailure("Failed", "", test.StringifyToXmlAttribute())
 			}
@@ -108,7 +108,7 @@ func (j *jUnitReportXML) WriteTestOutput(testSuiteResults []*results.TestSuiteRe
 	}
 
 	// to xml
-	if err := writeContentToFile(!noXMLHeader, suites, w); err != nil {
+	if err := writeContentToFile(noXMLHeader, suites, w); err != nil {
 		return err
 	}
 
