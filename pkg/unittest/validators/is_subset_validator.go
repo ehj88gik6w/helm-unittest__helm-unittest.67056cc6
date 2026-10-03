@@ -37,7 +37,7 @@ func (v IsSubsetValidator) validateManifest(manifest common.K8sManifest, manifes
 		return false, splitInfof(errorFormat, manifestIndex, -1, err.Error())
 	}
 
-	if len(actual) == 0 && context.Negative {
+	if len(actual) == 0 && !context.Negative {
 		return false, splitInfof(errorFormat, manifestIndex, -1, fmt.Sprintf("unknown path %s", v.Path))
 	}
 
@@ -50,7 +50,7 @@ func (v IsSubsetValidator) validateManifest(manifest common.K8sManifest, manifes
 		contentMap, contentOk := v.Content.(map[string]any)
 
 		if actualOk && contentOk {
-			found := validateSubset(contentMap, actualMap)
+			found := validateSubset(actualMap, contentMap)
 
 			if found == context.Negative {
 				errorMessage = v.failInfo(singleActual, manifestIndex, actualIndex, context.Negative)
@@ -59,7 +59,7 @@ func (v IsSubsetValidator) validateManifest(manifest common.K8sManifest, manifes
 			manifestValidateErrors = append(manifestValidateErrors, errorMessage...)
 			manifestValidateSuccess = determineSuccess(actualIndex, manifestValidateSuccess, found != context.Negative)
 
-			if manifestValidateSuccess && context.FailFast {
+			if !manifestValidateSuccess && context.FailFast {
 				break
 			}
 
@@ -74,7 +74,7 @@ func (v IsSubsetValidator) validateManifest(manifest common.K8sManifest, manifes
 		))
 
 		manifestValidateErrors = append(manifestValidateErrors, errorMessage...)
-		manifestValidateSuccess = determineSuccess(actualIndex, manifestValidateSuccess, actualOk)
+		manifestValidateSuccess = determineSuccess(actualIndex, manifestValidateSuccess, false)
 	}
 
 	return manifestValidateSuccess, manifestValidateErrors
