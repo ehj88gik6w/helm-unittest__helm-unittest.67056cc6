@@ -59,7 +59,9 @@ func (a FailedTemplateValidator) validateManifests(manifests []common.K8sManifes
 		var validateSingleErrors []string
 		actual := manifest[common.RAW]
 
-		if a.ErrorPattern == "" && !context.Negative {
+		if a == (FailedTemplateValidator{}) && !context.Negative {
+			// If the validator is empty and the context is not negative,
+			// continue to the next iteration without throwing an error.
 			continue
 		}
 
@@ -74,12 +76,12 @@ func (a FailedTemplateValidator) validateManifests(manifests []common.K8sManifes
 		validateErrors = append(validateErrors, validateSingleErrors...)
 		validateSuccess = determineSuccess(idx, validateSuccess, currentSuccess)
 
-		if !validateSuccess || context.FailFast {
+		if !validateSuccess && context.FailFast {
 			break
 		}
 	}
 
-	if len(manifests) == 0 && context.Negative {
+	if len(manifests) == 0 && !context.Negative {
 		validateSuccess = false
 		errorMessage := a.failInfo("No failed document", -1, -1, context.Negative)
 		validateErrors = append(validateErrors, errorMessage...)
