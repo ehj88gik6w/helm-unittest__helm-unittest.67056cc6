@@ -96,6 +96,7 @@ func FullCopyV2Chart(chartRoute, currentRoute string, targetChart *v2chart.Chart
 	copiedChart.Metadata.APIVersion = targetChart.Metadata.APIVersion
 	copiedChart.Metadata.Condition = targetChart.Metadata.Condition
 	copiedChart.Metadata.Tags = targetChart.Metadata.Tags
+	copiedChart.Metadata.AppVersion = targetChart.Metadata.AppVersion
 	copiedChart.Metadata.KubeVersion = targetChart.Metadata.KubeVersion
 	copiedChart.Metadata.Type = targetChart.Metadata.Type
 	copiedChart.Metadata.Annotations = maps.Clone(targetChart.Metadata.Annotations)
@@ -111,11 +112,12 @@ func FullCopyV2Chart(chartRoute, currentRoute string, targetChart *v2chart.Chart
 	for _, template := range targetChart.Templates {
 		copiedTemplate := new(chartcommon.File)
 		copiedTemplate.Name = template.Name
+		copiedTemplate.ModTime = template.ModTime
 		copiedTemplate.Data = template.Data
 		copiedChart.Templates = append(copiedChart.Templates, copiedTemplate)
 	}
 
-	copiedChart.Values = targetChart.Values
+	copiedChart.Values = CopySet(targetChart.Values)
 
 	copiedChart.Schema = targetChart.Schema
 
@@ -136,6 +138,7 @@ func FullCopyV2Chart(chartRoute, currentRoute string, targetChart *v2chart.Chart
 		copiedDependency.Tags = dependency.Tags
 		copiedDependency.Enabled = dependency.Enabled
 		copiedDependency.ImportValues = dependency.ImportValues
+		copiedDependency.Alias = dependency.Alias
 		copiedChart.Metadata.Dependencies = append(copiedChart.Metadata.Dependencies, copiedDependency)
 	}
 
